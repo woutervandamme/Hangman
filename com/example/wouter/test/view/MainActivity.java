@@ -133,7 +133,7 @@ public class MainActivity extends Activity implements Observer {
     }
 
     private void setHangManImage() {
-        switch(controller.getAantalFouten()){
+        switch(controller.getTriesLeft()){
             case 1:  galg.setImageResource(R.drawable.galg7);
                 break;
             case 2:  galg.setImageResource(R.drawable.galg6);

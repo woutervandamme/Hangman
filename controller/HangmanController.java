@@ -1,35 +1,24 @@
 package controller;
 
 import android.app.Application;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.view.View;
 
 import com.example.wouter.test.view.Observer;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
-import java.util.Random;
 
-import db.Database;
-import db.DatabaseFactory;
-import db.GeheugenDatabase;
-import model.HangManGame;
+import model.HangManFacade;
 
 /**
  * Created by wouter on 29/10/14.
  */
 public class HangmanController extends Application {
 
-    private HangManGame game;
-    private Database db;
-    private DatabaseFactory dbFac = new DatabaseFactory();
-    private String thema;
-    private Random randomGenerator = new Random();
+    private HangManFacade gameFacade;
 
-    protected HangmanController(){ }
+    protected HangmanController(){
+        gameFacade = new HangManFacade();
+    }
+
     private static HangmanController instance = null;
 
     public static HangmanController getInstance() {
@@ -38,47 +27,30 @@ public class HangmanController extends Application {
         }
         return instance;
     }
-    public void startGame(){
-        String woord = db.getWoorden(thema).get(randomGenerator.nextInt(db.getWoorden(thema).size()));
-        game = new HangManGame(woord);
-    }
 
-    public void setThema(String thema){
-        this.thema = thema;
-    }
+    public void startGame(){ gameFacade.startGame(); }
 
-    public void setDatabase(String database){ db = dbFac.createDatabase(database); }
+    public void setThema(String thema){ gameFacade.setThema(thema); }
 
-    public ArrayList<String> getThemas(){
-        ArrayList<String> lijst = null;
-        try {
-            lijst =  db.getThemas();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return lijst;
-    }
+    public void setDatabase(String database){ gameFacade.setDatabase(database); }
 
-    public void addObserver(Observer o){ game.addObserver(o); }
+    public ArrayList<String> getThemas(){ return gameFacade.getThemas(); }
 
-    public boolean isGameOver(){ return game.isGameOver(); }
+    public void addObserver(Observer o){ gameFacade.addObserver(o); }
 
-    public void restartGame() {
-        String woord = db.getWoorden(thema).get(randomGenerator.nextInt(db.getWoorden(thema).size()));
-        game.restartGame(woord);
-    }
+    public boolean isGameOver(){ return gameFacade.isGameOver(); }
 
-    public boolean isGewonnen() { return game.isGewonnen(); }
+    public void restartGame() { gameFacade.restartGame(); }
 
-    public String getWordToDisplay(){ return game.getWordToDisplay(); }
+    public boolean isGewonnen() { return gameFacade.isGewonnen(); }
 
-    public int getAantalFouten(){ return game.getTriesLeft(); }
+    public String getWordToDisplay(){ return gameFacade.getWordToDisplay(); }
 
     public void guessLetter(char letter){
-        game.guessLetter(letter);
+        gameFacade.guessLetter(letter);
     }
 
     public int getTriesLeft(){
-        return game.getTriesLeft();
+        return gameFacade.getTriesLeft();
     }
 }
